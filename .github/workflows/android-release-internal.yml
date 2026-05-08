@@ -15,7 +15,6 @@ jobs:
     steps:
       - name: Create Devin session
         env:
-          DEVIN_ORG_ID: ${{ secrets.DEVIN_ORG_ID }}
           DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
           NOTES: ${{ github.event.inputs.notes }}
         run: |
@@ -24,10 +23,9 @@ jobs:
             PROMPT="$PROMPT"$'\n\n'"$NOTES"
           fi
 
-          BODY=$(jq -n --arg prompt "$PROMPT" '{prompt: $prompt, agent: "devin"}')
+          BODY=$(jq -n --arg prompt "$PROMPT" '{prompt: $prompt}')
 
-          curl -fsSL -X POST \
-            "https://api.devin.ai/v3/organizations/${DEVIN_ORG_ID}/sessions" \
+          curl -fsSL -X POST "https://api.devin.ai/v1/sessions" \
             -H "Authorization: Bearer ${DEVIN_API_KEY}" \
             -H "Content-Type: application/json" \
             -d "$BODY"
