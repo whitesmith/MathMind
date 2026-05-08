@@ -27,7 +27,7 @@ jobs:
             --arg prompt "$PROMPT" \
             --arg snapshot_id "snapshot-2d1497d97c764c44875f49287ac64500" \
             --arg playbook_id "playbook-60b237e2ab024554b2a46afe22989baf" \
-            '{prompt: $prompt, snapshot_id: $snapshot_id, playbook_id: $playbook_id}')
+            '{prompt: $prompt, agent: "devin", snapshot_id: $snapshot_id, playbook_id: $playbook_id}')
 
           curl -fsSL -X POST "https://api.devin.ai/v1/sessions" \
             -H "Authorization: Bearer ${DEVIN_API_KEY}" \
