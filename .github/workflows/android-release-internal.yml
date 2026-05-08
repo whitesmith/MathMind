@@ -18,12 +18,16 @@ jobs:
           DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
           NOTES: ${{ github.event.inputs.notes }}
         run: |
-          PROMPT="!android_release_internal"
+          PROMPT="!android_release_internal Build the public Android app from https://github.com/whitesmith/MathMind and upload a new internal testing release to the Play Store."
           if [ -n "$NOTES" ]; then
             PROMPT="$PROMPT"$'\n\n'"$NOTES"
           fi
 
-          BODY=$(jq -n --arg prompt "$PROMPT" '{prompt: $prompt}')
+          BODY=$(jq -n \
+            --arg prompt "$PROMPT" \
+            --arg snapshot_id "snapshot-2d1497d97c764c44875f49287ac64500" \
+            --arg playbook_id "playbook-60b237e2ab024554b2a46afe22989baf" \
+            '{prompt: $prompt, snapshot_id: $snapshot_id, playbook_id: $playbook_id}')
 
           curl -fsSL -X POST "https://api.devin.ai/v1/sessions" \
             -H "Authorization: Bearer ${DEVIN_API_KEY}" \
