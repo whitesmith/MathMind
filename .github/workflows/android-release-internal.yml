@@ -1,0 +1,33 @@
+name: Android Release (Internal)
+
+on:
+  workflow_dispatch:
+    inputs:
+      notes:
+        description: "Optional notes to append to the Devin prompt (e.g. release notes, version bump)"
+        required: false
+        type: string
+
+jobs:
+  trigger-devin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create Devin session
+        env:
+          DEVIN_ORG_ID: ${{ secrets.DEVIN_ORG_ID }}
+          DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
+          NOTES: ${{ github.event.inputs.notes }}
+        run: |
+          PROMPT="!android_release_internal"
+          if [ -n "$NOTES" ]; then
+            PROMPT="$PROMPT"$'\n\n'"$NOTES"
+          fi
+
+          BODY=$(jq -n --arg prompt "$PROMPT" '{prompt: $prompt, agent: "devin"}')
+
+          curl -fsSL -X POST \
+            "https://api.devin.ai/v3/organizations/${DEVIN_ORG_ID}/sessions" \
+            -H "Authorization: Bearer ${DEVIN_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY"
